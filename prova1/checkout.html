@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Checkout</h1>
+        <img src="/images/ART BURGER logo3.svg" alt="Logo" class="logo">
+    </header>
+    <main>
+        <section id="checkout-section">
+            <h2>Riepilogo Ordine</h2>
+            <div id="checkout-items">
+                <!-- Checkout items will be dynamically inserted here -->
+            </div>
+            <p id="totale-checkout">Totale: 0 €</p>
+            <button id="confirm-button">Conferma Ordine</button>
+        </section>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkoutItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            const checkoutItemsElement = document.getElementById('checkout-items');
+
+            function renderCheckoutItems() {
+                let checkoutHTML = '';
+                checkoutItems.forEach(function(item) {
+                    checkoutHTML += `
+                        <div class="checkout-item">
+                            <span>${item.name} - ${item.price.toFixed(2)} €</span>
+                        </div>`;
+                });
+                checkoutItemsElement.innerHTML = checkoutHTML;
+
+                aggiornaTotaleCheckout();
+            }
+
+            function aggiornaTotaleCheckout() {
+                let totale = checkoutItems.reduce(function(acc, item) {
+                    return acc + item.price;
+                }, 0);
+
+                document.getElementById('totale-checkout').innerText = `Totale: ${totale.toFixed(2)} €`;
+            }
+
+            renderCheckoutItems();
+
+            document.getElementById('confirm-button').addEventListener('click', () => {
+                alert('Ordine Confermato!');
+                localStorage.removeItem('cartItems'); // Pulisci il carrello dopo la conferma
+                window.location.href = 'index.html'; // Torna alla pagina principale
+            });
+        });
+    </script>
+</body>
+</html>
