@@ -166,3 +166,12 @@ section {
 .cart-item-quantity button {
     margin: 0 0.25rem; /* Adjust spacing between quantity buttons */
 }
+
+#confirm-button{
+    width: 100%;
+    padding: 1rem;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
