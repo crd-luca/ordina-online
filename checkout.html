@@ -52,6 +52,18 @@
               Please enter a valid email address for shipping updates.
             </div>
           </div>
+            <div class="col-12">
+            <label class="form-label">Metodo di Consegna:</label>
+            <div class="form-check">
+              <input id="casa" name="deliveryMethod" type="radio" class="form-check-input" checked="" required="">
+              <label class="form-check-label" for="casa">Consegna a casa</label>
+              <input type="text" class="form-control mt-2" id="indirizzo-casa" placeholder="Inserisci il tuo indirizzo">
+            </div>
+            <div class="form-check">
+              <input id="locale" name="deliveryMethod" type="radio" class="form-check-input" required="">
+              <label class="form-check-label" for="locale">consegna al tavolo</label>
+              <input type="text" class="form-control mt-2" id="numero-tavolo" placeholder="Inserisci il numero del tavolo">
+            </div>
           <h4 class="mb-3">Payment</h4>
           <div class="form-check">
             <input id="credit" name="paymentMethod" type="radio" class="form-check-input" checked="" required="">
