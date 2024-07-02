@@ -175,3 +175,7 @@ section {
     border: none;
     cursor: pointer;
 }
+
+.c {
+    text-align: center;
+}
