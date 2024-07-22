@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderCartItems();
         });
 
-        item.querySelector('.customize').addEventListener('click', () => {
+        item.querySelector('.customize')?.addEventListener('click', () => {
             currentItem = item;
             const originalIngredients = item.dataset.ingredients.split(', ');
             const customIngredients = item.dataset.customIngredients ? item.dataset.customIngredients.split(', ') : [];
@@ -64,8 +64,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 selectedIngredients.push(checkbox.value);
             }
         });
-        currentItem.dataset.customIngredients = selectedIngredients.join(', ');
-        customizeModal.style.display = 'none';
+        if (currentItem) {
+            currentItem.dataset.customIngredients = selectedIngredients.join(', ');
+            customizeModal.style.display = 'none';
+        }
     });
 
     window.addEventListener('click', (event) => {
@@ -89,7 +91,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = checkoutUrl;
     });
 
-
     function saveCartItems() {
         localStorage.setItem('cartItems', JSON.stringify(cartItems));
     }
@@ -100,14 +101,19 @@ document.addEventListener('DOMContentLoaded', () => {
             const itemElement = document.createElement('div');
             itemElement.classList.add('cart-item');
 
+            // Verifica se l'articolo è una bevanda o un altro tipo di articolo
+            const isBeverage = item.ingredients.trim() === '';
+
             // Item details
             const detailsElement = document.createElement('div');
             detailsElement.classList.add('cart-item-details');
             detailsElement.innerHTML = `
                 <div>${item.name}</div>
                 <div>Prezzo: ${item.price.toFixed(2)} €</div>
-                <div>Ingredienti: ${item.ingredients}</div>
+                ${!isBeverage ? `<div>Ingredienti: ${item.ingredients}</div>` : ''}
             `;
+
+            itemElement.appendChild(detailsElement);
 
             // Quantity controls
             const quantityElement = document.createElement('div');
@@ -168,4 +174,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderCartItems(); // Initial rendering of cart items
 });
-
