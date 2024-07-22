@@ -74,10 +74,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Recupera il parametro dalla URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const table = urlParams.get('table');
+
     document.getElementById('checkout-button').addEventListener('click', () => {
+        // Salva gli elementi del carrello nel localStorage
         localStorage.setItem('cartItems', JSON.stringify(cartItems));
-        window.location.href = 'checkout.html';
+    
+        // Costruisci l'URL di checkout con il parametro 'table'
+        const checkoutUrl = `checkout.html?table=${table}`;
+        
+        // Reindirizza alla pagina di checkout
+        window.location.href = checkoutUrl;
     });
+
 
     function saveCartItems() {
         localStorage.setItem('cartItems', JSON.stringify(cartItems));
@@ -157,3 +168,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderCartItems(); // Initial rendering of cart items
 });
+
