@@ -4,147 +4,181 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout</title>
-      <link
+    <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="style.css">
+    <style>
+        .hidden {
+            display: none;
+        }
+        .invalid-feedback {
+            display: block;
+        }
+    </style>
 </head>
 <body>
     <header>
         <h1>Checkout</h1>
-    <img src="./images/ART BURGER logo3.svg" alt="Logo" class="logo">
-        
+        <img src="./images/ART BURGER logo3.svg" alt="Logo" class="logo">
     </header>
     <main>
         <section id="checkout-section">
-          <h2>Riepilogo Ordine</h2>
-          <div> <h5 id="welcome-message" class="mb-3"></h5></div>
+            <h2>Riepilogo Ordine</h2>
+            <div><h5 id="welcome-message" class="mb-3"></h5></div>
             <div id="checkout-items">
                 <!-- Checkout items will be dynamically inserted here -->
             </div>
             <hr>
-        <div class="form-pagamento">
-
-          <div class="col-sm-6">
-            <label for="firstName" class="form-label">First name</label>
-            <input
-              type="text"
-              class="form-control"
-              id="firstName"
-              placeholder=""
-              value=""
-              required=""
-            />
-            <div class="invalid-feedback">Valid first name is required.</div>
-          </div>
-          <div class="col-sm-6">
-            <label for="lastName" class="form-label">Last name</label>
-            <input type="text" class="form-control" id="lastName" placeholder="" value="" required="">
-            <div class="invalid-feedback">
-              Valid last name is required.
+            <div class="form-pagamento">
+                <div class="col-sm-6">
+                    <label for="firstName" class="form-label">First name</label>
+                    <input type="text" class="form-control" id="firstName" placeholder="" value="" required="">
+                    <div class="invalid-feedback">Valid first name is required.</div>
+                </div>
+                <div class="col-sm-6">
+                    <label for="lastName" class="form-label">Last name</label>
+                    <input type="text" class="form-control" id="lastName" placeholder="" value="" required="">
+                    <div class="invalid-feedback">Valid last name is required.</div>
+                </div>
+                <div class="col-12">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" placeholder="you@example.com">
+                    <div class="invalid-feedback">Please enter a valid email address for shipping updates.</div>
+                </div>
+                <div class="col-12">
+                    <h4 class="mb-3">Payment</h4>
+                    <div class="form-check">
+                        <input id="credit" name="paymentMethod" type="radio" class="form-check-input" checked="" required="">
+                        <label class="form-check-label" for="credit">Credit card</label>
+                    </div>
+                    <div class="form-check">
+                        <input id="debit" name="paymentMethod" type="radio" class="form-check-input" required="">
+                        <label class="form-check-label" for="debit">Debit card</label>
+                    </div>
+                    <div class="form-check">
+                        <input id="paypal" name="paymentMethod" type="radio" class="form-check-input" required="">
+                        <label class="form-check-label" for="paypal">PayPal</label>
+                    </div>
+                    <div class="form-check">
+                        <input id="cash" name="paymentMethod" type="radio" class="form-check-input" required="">
+                        <label class="form-check-label" for="cash">Paga alla cassa</label>
+                    </div>
+                    <div id="card-details" class="row gy-3">
+                        <div class="col-md-6">
+                            <label for="cc-name" class="form-label">Name on card</label>
+                            <input type="text" class="form-control" id="cc-name" placeholder="" required="">
+                            <small class="text-body-secondary">Full name as displayed on card</small>
+                            <div class="invalid-feedback">Name on card is required</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="cc-number" class="form-label">Credit card number</label>
+                            <input type="text" class="form-control" id="cc-number" placeholder="" required="" maxlength="16">
+                            <div class="invalid-feedback">Credit card number is required</div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="cc-expiration-month" class="form-label">Expiration Month</label>
+                            <select class="form-control" id="cc-expiration-month" required="">
+                                <option value="">Month</option>
+                                <option value="01">01</option>
+                                <option value="02">02</option>
+                                <option value="03">03</option>
+                                <option value="04">04</option>
+                                <option value="05">05</option>
+                                <option value="06">06</option>
+                                <option value="07">07</option>
+                                <option value="08">08</option>
+                                <option value="09">09</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                            </select>
+                            <div class="invalid-feedback" id="expiration-month-error">Expiration month is required and must be valid.</div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="cc-expiration-year" class="form-label">Expiration Year</label>
+                            <select class="form-control" id="cc-expiration-year" required="">
+                                <option value="">Year</option>
+                                <!-- Generate years dynamically -->
+                            </select>
+                            <div class="invalid-feedback" id="expiration-year-error">Expiration year is required and must be valid.</div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="cc-cvv" class="form-label">CVV</label>
+                            <input type="text" class="form-control" id="cc-cvv" placeholder="" required="" maxlength="3">
+                            <div class="invalid-feedback">Security code required</div>
+                        </div>
+                    </div>
+                </div>
+                <p id="totale-checkout">Totale: 0 €</p>
+                <button id="confirm-button">Conferma Ordine</button>
             </div>
-          </div>
-          <div class="col-12">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" placeholder="you@example.com">
-            <div class="invalid-feedback">
-              Please enter a valid email address for shipping updates.
-            </div>
-          </div>
-            <div class="col-12">
-         
-          <h4 class="mb-3">Payment</h4>
-          <div class="form-check">
-            <input id="credit" name="paymentMethod" type="radio" class="form-check-input" checked="" required="">
-            <label class="form-check-label" for="credit">Credit card</label>
-          </div>
-          <div class="form-check">
-            <input id="debit" name="paymentMethod" type="radio" class="form-check-input" required="">
-            <label class="form-check-label" for="debit">Debit card</label>
-          </div>
-          <div class="form-check">
-            <input id="paypal" name="paymentMethod" type="radio" class="form-check-input" required="">
-            <label class="form-check-label" for="paypal">PayPal</label>
-          </div>
-          <div class="row gy-3">
-            <div class="col-md-6">
-              <label for="cc-name" class="form-label">Name on card</label>
-              <input type="text" class="form-control" id="cc-name" placeholder="" required="">
-              <small class="text-body-secondary">Full name as displayed on card</small>
-              <div class="invalid-feedback">Name on card is required</div>
-            </div>
-
-            <div class="col-md-6">
-              <label for="cc-number" class="form-label">Credit card number</label>
-              <input type="text" class="form-control" id="cc-number" placeholder="" required="">
-              <div class="invalid-feedback">
-                Credit card number is required
-              </div>
-            </div>
-
-            <div class="col-md-3">
-              <label for="cc-expiration" class="form-label">Expiration</label>
-              <input type="text" class="form-control" id="cc-expiration" placeholder="" required="">
-              <div class="invalid-feedback">Expiration date required</div>
-            </div>
-
-            <div class="col-md-3">
-              <label for="cc-cvv" class="form-label">CVV</label>
-              <input type="text" class="form-control" id="cc-cvv" placeholder="" required="">
-              <div class="invalid-feedback">Security code required</div>
-            </div>
-          </div>
-        </div>
-        <p id="totale-checkout">Totale: 0 €</p>
-        <button id="confirm-button">Conferma Ordine</button>
-        
-      </section>
+        </section>
     </main>
     <script>
-      function getQueryParam(param) {
-          const urlParams = new URLSearchParams(window.location.search);
-          return urlParams.get(param);
-      }
-      
-      document.addEventListener('DOMContentLoaded', () => {
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        function isFutureDate(month, year) {
+            const now = new Date();
+            const selectedYear = parseInt(year, 10);
+            const selectedMonth = parseInt(month, 10);
+            const currentMonth = now.getMonth() + 1;
+            const currentYear = now.getFullYear();
+
+            if (selectedYear > currentYear) {
+                return true;
+            } else if (selectedYear === currentYear) {
+                return selectedMonth >= currentMonth;
+            } else {
+                return false;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
             const checkoutItems = JSON.parse(localStorage.getItem('cartItems')) || [];
             const checkoutItemsElement = document.getElementById('checkout-items');
+            const currentYear = new Date().getFullYear();
+            const expirationYearSelect = document.getElementById('cc-expiration-year');
+
+            // Generate years dynamically
+            for (let i = 0; i < 10; i++) {
+                const option = document.createElement('option');
+                option.value = currentYear + i;
+                option.text = currentYear + i;
+                expirationYearSelect.add(option);
+            }
 
             function renderCheckoutItems() {
-    let checkoutHTML = '';
-    checkoutItems.forEach(function(item) {
-        checkoutHTML += `
-            <div class="checkout-item">
-                <span>${item.name} - ${item.price.toFixed(2)} € x ${item.quantity}</span>
-                <div>Ingredienti: ${item.ingredients}</div>
-            </div>`;
-    });
-    checkoutItemsElement.innerHTML = checkoutHTML;
+                let checkoutHTML = '';
+                checkoutItems.forEach(function(item) {
+                    checkoutHTML += `
+                        <div class="checkout-item">
+                            <span>${item.name} - ${item.price.toFixed(2)} € x ${item.quantity}</span>
+                            <div>Ingredienti: ${item.ingredients}</div>
+                        </div>`;
+                });
+                checkoutItemsElement.innerHTML = checkoutHTML;
+                aggiornaTotaleCheckout();
+            }
 
-    aggiornaTotaleCheckout();
-}
+            function aggiornaTotaleCheckout() {
+                let totale = checkoutItems.reduce(function(acc, item) {
+                    return acc + item.price * item.quantity;
+                }, 0);
+                document.getElementById('totale-checkout').innerText = `Totale: ${totale.toFixed(2)} €`;
+            }
 
-function aggiornaTotaleCheckout() {
-    let totale = checkoutItems.reduce(function(acc, item) {
-        return acc + item.price * item.quantity;
-    }, 0);
-
-    document.getElementById('totale-checkout').innerText = `Totale: ${totale.toFixed(2)} €`;
-}
-
-
-
-     
             function mostraMessaggioBenvenuto() {
-                // Rimuovere eventuali slash extra alla fine dell'URL
                 const currentUrl = window.location.href;
                 const cleanUrl = currentUrl.endsWith('/') ? currentUrl.slice(0, -1) : currentUrl;
                 const tableNumber = new URL(cleanUrl).searchParams.get('table');
 
-                console.log(`Table number from URL: ${tableNumber}`); // Debug log
                 if (tableNumber) {
                     localStorage.setItem('tableNumber', tableNumber);
                     const welcomeMessage = document.getElementById('welcome-message');
@@ -156,26 +190,82 @@ function aggiornaTotaleCheckout() {
                         welcomeMessage.innerText = `Benvenuti al tavolo ${savedTableNumber}!`;
                     }
                 }
-            }            
-            
-            //mostraMessaggioBenvenuto();
+            }
+
+            function toggleCardDetails() {
+                const cardDetails = document.getElementById('card-details');
+                const cashOption = document.getElementById('cash').checked;
+                cardDetails.classList.toggle('hidden', cashOption);
+            }
+
+            function validateCardDetails() {
+                const name = document.getElementById('cc-name').value;
+                const number = document.getElementById('cc-number').value;
+                const cvv = document.getElementById('cc-cvv').value;
+                const expirationMonth = document.getElementById('cc-expiration-month').value;
+                const expirationYear = document.getElementById('cc-expiration-year').value;
+
+                const nameRegex = /^[A-Za-z\s]+$/;
+                const numberRegex = /^\d{16}$/;
+                const cvvRegex = /^\d{3}$/;
+
+                let valid = true;
+
+                // Reset error messages
+                document.getElementById('expiration-month-error').style.display = 'none';
+                document.getElementById('expiration-year-error').style.display = 'none';
+
+                if (!nameRegex.test(name)) {
+                    alert('Nome non valido. Il nome sulla carta deve contenere solo lettere.');
+                    valid = false;
+                }
+
+                if (!numberRegex.test(number)) {
+                    alert('Numero carta non valido. Il numero della carta deve contenere esattamente 16 cifre.');
+                    valid = false;
+                }
+
+                if (!cvvRegex.test(cvv)) {
+                    alert('CVV non valido. Il CVV deve contenere esattamente 3 cifre.');
+                    valid = false;
+                }
+
+                if (!expirationMonth || !expirationYear || !isFutureDate(expirationMonth, expirationYear)) {
+                    document.getElementById('expiration-month-error').style.display = 'block';
+                    document.getElementById('expiration-year-error').style.display = 'block';
+                    alert('La data di scadenza non è valida. Deve essere futura rispetto alla data odierna.');
+                    valid = false;
+                }
+
+                return valid;
+            }
+
             renderCheckoutItems();
+            mostraMessaggioBenvenuto();
+            toggleCardDetails();
 
-
-            document.getElementById('confirm-button').addEventListener('click', () => {
-                alert('Ordine Confermato!');
-                localStorage.removeItem('cartItems'); // Pulisci il carrello dopo la conferma
-                
-                // Recupera il parametro 'table' dalla URL della pagina di checkout
-                const table = getQueryParam('table');
-
-                // Costruisci l'URL di ritorno con il parametro 'table'
-                const returnUrl = table ? `index.html?table=${table}` : 'index.html';
-                
-                // Reindirizza alla pagina principale
-                window.location.href = returnUrl;
+            document.querySelectorAll('input[name="paymentMethod"]').forEach((input) => {
+                input.addEventListener('change', toggleCardDetails);
             });
 
+            document.getElementById('cc-expiration-month').addEventListener('change', validateCardDetails);
+            document.getElementById('cc-expiration-year').addEventListener('change', validateCardDetails);
+
+            document.getElementById('confirm-button').addEventListener('click', (event) => {
+                const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').id;
+                
+                if (paymentMethod !== 'cash' && !validateCardDetails()) {
+                    event.preventDefault();
+                    return;
+                }
+
+                alert('Ordine Confermato!');
+                localStorage.removeItem('cartItems');
+
+                const table = getQueryParam('table');
+                const returnUrl = table ? `index.html?table=${table}` : 'index.html';
+                window.location.href = returnUrl;
+            });
         });
     </script>
 </body>
