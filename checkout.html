@@ -20,12 +20,14 @@
     </header>
     <main>
         <section id="checkout-section">
-            <h2>Riepilogo Ordine</h2>
+          <h2>Riepilogo Ordine</h2>
+          <div> <h5 id="welcome-message" class="mb-3"></h5></div>
             <div id="checkout-items">
                 <!-- Checkout items will be dynamically inserted here -->
             </div>
-            
+            <hr>
         <div class="form-pagamento">
+
           <div class="col-sm-6">
             <label for="firstName" class="form-label">First name</label>
             <input
@@ -53,17 +55,7 @@
             </div>
           </div>
             <div class="col-12">
-            <label class="form-label">Metodo di Consegna:</label>
-            <div class="form-check">
-              <input id="casa" name="deliveryMethod" type="radio" class="form-check-input" checked="" required="">
-              <label class="form-check-label" for="casa">Consegna a casa</label>
-              <input type="text" class="form-control mt-2" id="indirizzo-casa" placeholder="Inserisci il tuo indirizzo">
-            </div>
-            <div class="form-check">
-              <input id="locale" name="deliveryMethod" type="radio" class="form-check-input" required="">
-              <label class="form-check-label" for="locale">consegna al tavolo</label>
-              <input type="text" class="form-control mt-2" id="numero-tavolo" placeholder="Inserisci il numero del tavolo">
-            </div>
+         
           <h4 class="mb-3">Payment</h4>
           <div class="form-check">
             <input id="credit" name="paymentMethod" type="radio" class="form-check-input" checked="" required="">
@@ -106,44 +98,84 @@
             </div>
           </div>
         </div>
-            <p id="totale-checkout">Totale: 0 €</p>
-            <button id="confirm-button">Conferma Ordine</button>
-            
-        </section>
+        <p id="totale-checkout">Totale: 0 €</p>
+        <button id="confirm-button">Conferma Ordine</button>
+        
+      </section>
     </main>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+      function getQueryParam(param) {
+          const urlParams = new URLSearchParams(window.location.search);
+          return urlParams.get(param);
+      }
+      
+      document.addEventListener('DOMContentLoaded', () => {
             const checkoutItems = JSON.parse(localStorage.getItem('cartItems')) || [];
             const checkoutItemsElement = document.getElementById('checkout-items');
 
             function renderCheckoutItems() {
-                let checkoutHTML = '';
-                checkoutItems.forEach(function(item) {
-                    checkoutHTML += `
-                        <div class="checkout-item">
-                            <span>${item.name} - ${item.price.toFixed(2)} €</span>
-                        </div>`;
-                });
-                checkoutItemsElement.innerHTML = checkoutHTML;
+    let checkoutHTML = '';
+    checkoutItems.forEach(function(item) {
+        checkoutHTML += `
+            <div class="checkout-item">
+                <span>${item.name} - ${item.price.toFixed(2)} € x ${item.quantity}</span>
+                <div>Ingredienti: ${item.ingredients}</div>
+            </div>`;
+    });
+    checkoutItemsElement.innerHTML = checkoutHTML;
 
-                aggiornaTotaleCheckout();
-            }
+    aggiornaTotaleCheckout();
+}
 
-            function aggiornaTotaleCheckout() {
-                let totale = checkoutItems.reduce(function(acc, item) {
-                    return acc + item.price;
-                }, 0);
+function aggiornaTotaleCheckout() {
+    let totale = checkoutItems.reduce(function(acc, item) {
+        return acc + item.price * item.quantity;
+    }, 0);
 
-                document.getElementById('totale-checkout').innerText = `Totale: ${totale.toFixed(2)} €`;
-            }
+    document.getElementById('totale-checkout').innerText = `Totale: ${totale.toFixed(2)} €`;
+}
 
+
+
+     
+            function mostraMessaggioBenvenuto() {
+                // Rimuovere eventuali slash extra alla fine dell'URL
+                const currentUrl = window.location.href;
+                const cleanUrl = currentUrl.endsWith('/') ? currentUrl.slice(0, -1) : currentUrl;
+                const tableNumber = new URL(cleanUrl).searchParams.get('table');
+
+                console.log(`Table number from URL: ${tableNumber}`); // Debug log
+                if (tableNumber) {
+                    localStorage.setItem('tableNumber', tableNumber);
+                    const welcomeMessage = document.getElementById('welcome-message');
+                    welcomeMessage.innerText = `Benvenuti al tavolo ${tableNumber}!`;
+                } else {
+                    const savedTableNumber = localStorage.getItem('tableNumber');
+                    if (savedTableNumber) {
+                        const welcomeMessage = document.getElementById('welcome-message');
+                        welcomeMessage.innerText = `Benvenuti al tavolo ${savedTableNumber}!`;
+                    }
+                }
+            }            
+            
+            //mostraMessaggioBenvenuto();
             renderCheckoutItems();
+
 
             document.getElementById('confirm-button').addEventListener('click', () => {
                 alert('Ordine Confermato!');
                 localStorage.removeItem('cartItems'); // Pulisci il carrello dopo la conferma
-                window.location.href = 'index.html'; // Torna alla pagina principale
+                
+                // Recupera il parametro 'table' dalla URL della pagina di checkout
+                const table = getQueryParam('table');
+
+                // Costruisci l'URL di ritorno con il parametro 'table'
+                const returnUrl = table ? `index.html?table=${table}` : 'index.html';
+                
+                // Reindirizza alla pagina principale
+                window.location.href = returnUrl;
             });
+
         });
     </script>
 </body>
