@@ -18,6 +18,10 @@
         .invalid-feedback {
             display: block;
         }
+        .required-field::after {
+            content: ' *';
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -34,49 +38,50 @@
             </div>
             <hr>
             <div class="form-pagamento">
+                <p>I campi contrassegnati con <span style="color: red;">*</span> sono obbligatori.</p>
                 <div class="col-sm-6">
-                    <label for="firstName" class="form-label">First name</label>
-                    <input type="text" class="form-control" id="firstName" placeholder="" value="" required="">
+                    <label for="firstName" class="form-label required-field">First name</label>
+                    <input type="text" class="form-control" id="firstName" placeholder="" value="" required>
                 </div>
                 <div class="col-sm-6">
-                    <label for="lastName" class="form-label">Last name</label>
-                    <input type="text" class="form-control" id="lastName" placeholder="" value="" required="">
+                    <label for="lastName" class="form-label required-field">Last name</label>
+                    <input type="text" class="form-control" id="lastName" placeholder="" value="" required>
                 </div>
                 <div class="col-12">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" placeholder="you@example.com">
+                    <label for="email" class="form-label required-field">Email</label>
+                    <input type="email" class="form-control" id="email" placeholder="you@example.com" required>
                 </div>
                 <div class="col-12">
                     <h4 class="mb-3">Payment</h4>
                     <div class="form-check">
-                        <input id="credit" name="paymentMethod" type="radio" class="form-check-input" checked="" required="">
+                        <input id="credit" name="paymentMethod" type="radio" class="form-check-input" checked required>
                         <label class="form-check-label" for="credit">Credit card</label>
                     </div>
                     <div class="form-check">
-                        <input id="debit" name="paymentMethod" type="radio" class="form-check-input" required="">
+                        <input id="debit" name="paymentMethod" type="radio" class="form-check-input" required>
                         <label class="form-check-label" for="debit">Debit card</label>
                     </div>
                     <div class="form-check">
-                        <input id="paypal" name="paymentMethod" type="radio" class="form-check-input" required="">
+                        <input id="paypal" name="paymentMethod" type="radio" class="form-check-input" required>
                         <label class="form-check-label" for="paypal">PayPal</label>
                     </div>
                     <div class="form-check">
-                        <input id="cash" name="paymentMethod" type="radio" class="form-check-input" required="">
+                        <input id="cash" name="paymentMethod" type="radio" class="form-check-input" required>
                         <label class="form-check-label" for="cash">Paga alla cassa</label>
                     </div>
                     <div id="card-details" class="row gy-3">
                         <div class="col-md-6">
-                            <label for="cc-name" class="form-label">Name on card</label>
-                            <input type="text" class="form-control" id="cc-name" placeholder="" required="">
+                            <label for="cc-name" class="form-label required-field">Name on card</label>
+                            <input type="text" class="form-control" id="cc-name" placeholder="" required>
                             <small class="text-body-secondary">Full name as displayed on card</small>
                         </div>
                         <div class="col-md-6">
-                            <label for="cc-number" class="form-label">Credit card number</label>
-                            <input type="text" class="form-control" id="cc-number" placeholder="" required="" maxlength="16">
+                            <label for="cc-number" class="form-label required-field">Credit card number</label>
+                            <input type="text" class="form-control" id="cc-number" placeholder="" required maxlength="16">
                         </div>
                         <div class="col-md-3">
-                            <label for="cc-expiration-month" class="form-label">Expiration Month</label>
-                            <select class="form-control" id="cc-expiration-month" required="">
+                            <label for="cc-expiration-month" class="form-label required-field">Expiration Month</label>
+                            <select class="form-control" id="cc-expiration-month" required>
                                 <option value="">Month</option>
                                 <option value="01">01</option>
                                 <option value="02">02</option>
@@ -94,16 +99,16 @@
                             <div class="invalid-feedback" id="expiration-month-error"></div>
                         </div>
                         <div class="col-md-3">
-                            <label for="cc-expiration-year" class="form-label">Expiration Year</label>
-                            <select class="form-control" id="cc-expiration-year" required="">
+                            <label for="cc-expiration-year" class="form-label required-field">Expiration Year</label>
+                            <select class="form-control" id="cc-expiration-year" required>
                                 <option value="">Year</option>
                                 <!-- Generate years dynamically -->
                             </select>
                             <div class="invalid-feedback" id="expiration-year-error"></div>
                         </div>
                         <div class="col-md-3">
-                            <label for="cc-cvv" class="form-label">CVV</label>
-                            <input type="text" class="form-control" id="cc-cvv" placeholder="" required="" maxlength="3">
+                            <label for="cc-cvv" class="form-label required-field">CVV</label>
+                            <input type="text" class="form-control" id="cc-cvv" placeholder="" required maxlength="3">
                             <div class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -148,22 +153,22 @@
                 option.text = currentYear + i;
                 expirationYearSelect.add(option);
             }
+
             function renderCheckoutItems() {
-    let checkoutHTML = '';
-    checkoutItems.forEach(function(item) {
-        // Verifica se l'articolo è una bevanda (ingredienti vuoti o solo spazi)
-        const isBeverage = !item.ingredients.trim();
+                let checkoutHTML = '';
+                checkoutItems.forEach(function(item) {
+                    // Verifica se l'articolo è una bevanda (ingredienti vuoti o solo spazi)
+                    const isBeverage = !item.ingredients.trim();
 
-        checkoutHTML += `
-            <div class="checkout-item">
-                <span>${item.name} - ${item.price.toFixed(2)} € x ${item.quantity}</span>
-                ${!isBeverage ? `<div>Ingredienti: ${item.ingredients}</div>` : ''}
-            </div>`;
-    });
-    checkoutItemsElement.innerHTML = checkoutHTML;
-    aggiornaTotaleCheckout();
-}
-
+                    checkoutHTML += `
+                        <div class="checkout-item">
+                            <span>${item.name} - ${item.price.toFixed(2)} € x ${item.quantity}</span>
+                            ${!isBeverage ? `<div>Ingredienti: ${item.ingredients}</div>` : ''}
+                        </div>`;
+                });
+                checkoutItemsElement.innerHTML = checkoutHTML;
+                aggiornaTotaleCheckout();
+            }
 
             function aggiornaTotaleCheckout() {
                 let totale = checkoutItems.reduce(function(acc, item) {
@@ -238,8 +243,21 @@
                 return valid;
             }
 
+            function validateForm() {
+                const firstName = document.getElementById('firstName').value.trim();
+                const lastName = document.getElementById('lastName').value.trim();
+                const email = document.getElementById('email').value.trim();
+
+                if (!firstName || !lastName || !email) {
+                    alert('Per favore, compila tutti i campi obbligatori.');
+                    return false;
+                }
+
+                return true;
+            }
+
             renderCheckoutItems();
-            //mostraMessaggioBenvenuto();
+            mostraMessaggioBenvenuto();
             toggleCardDetails();
 
             document.querySelectorAll('input[name="paymentMethod"]').forEach((input) => {
@@ -251,7 +269,12 @@
 
             document.getElementById('confirm-button').addEventListener('click', (event) => {
                 const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').id;
-                
+
+                if (!validateForm()) {
+                    event.preventDefault();
+                    return;
+                }
+
                 if (paymentMethod !== 'cash' && !validateCardDetails()) {
                     event.preventDefault();
                     return;
