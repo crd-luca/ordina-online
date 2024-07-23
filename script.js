@@ -81,6 +81,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const table = urlParams.get('table');
 
     document.getElementById('checkout-button').addEventListener('click', () => {
+        // Verifica se il carrello contiene almeno un elemento
+        if (cartItems.length === 0) {
+            alert('Inserisci almeno un elemento nel carrello prima di procedere al checkout.');
+            return;
+        }
+
         // Salva gli elementi del carrello nel localStorage
         localStorage.setItem('cartItems', JSON.stringify(cartItems));
     
