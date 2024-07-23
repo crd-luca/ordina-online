@@ -1,445 +1,182 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ordina Online</title>
-    <link rel="stylesheet" href="./style.css">
-</head>
-<body>
-    <header>
-        <h1>Ordina Online</h1>
-        <img src="./images/ART BURGER logo3.svg" alt="Logo" class="logo">
+document.addEventListener('DOMContentLoaded', () => {
+    let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+    const menuItems = document.querySelectorAll('.menu-item');
+    const cartItemsElement = document.getElementById('cart-items');
+    const customizeModal = document.getElementById('customize-modal');
+    const ingredientOptions = document.getElementById('ingredient-options');
+    const saveCustomizationButton = document.getElementById('save-customization');
+    const closeButton = document.querySelector('.close-button');
+    let currentItem = null;
+
+    menuItems.forEach(item => {
+        item.querySelector('.add-to-cart').addEventListener('click', () => {
+            const name = item.dataset.name;
+            const price = parseFloat(item.dataset.price);
+            let ingredients = item.dataset.ingredients || '';
+
+            // If ingredients were customized, update the item's dataset
+            if (item.dataset.customIngredients) {
+                ingredients = item.dataset.customIngredients;
+                // Reset customIngredients dataset after adding to cart
+                delete item.dataset.customIngredients;
+            }
+
+            cartItems.push({ name, price, ingredients, quantity: 1 });
+            saveCartItems();
+            renderCartItems();
+        });
+
+        item.querySelector('.customize')?.addEventListener('click', () => {
+            currentItem = item;
+            const originalIngredients = item.dataset.ingredients.split(', ');
+            const customIngredients = item.dataset.customIngredients ? item.dataset.customIngredients.split(', ') : [];
+
+            ingredientOptions.innerHTML = '';
+            originalIngredients.forEach(ingredient => {
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = ingredient;
+                checkbox.name = ingredient;
+                checkbox.value = ingredient;
+                checkbox.checked = customIngredients.includes(ingredient);
+
+                const label = document.createElement('label');
+                label.htmlFor = ingredient;
+                label.textContent = ingredient;
+
+                const div = document.createElement('div');
+                div.appendChild(checkbox);
+                div.appendChild(label);
+                ingredientOptions.appendChild(div);
+            });
+            customizeModal.style.display = 'block';
+        });
+    });
+
+    closeButton.addEventListener('click', () => {
+        customizeModal.style.display = 'none';
+    });
+
+    saveCustomizationButton.addEventListener('click', () => {
+        const selectedIngredients = [];
+        ingredientOptions.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            if (checkbox.checked) {
+                selectedIngredients.push(checkbox.value);
+            }
+        });
+        if (currentItem) {
+            currentItem.dataset.customIngredients = selectedIngredients.join(', ');
+            customizeModal.style.display = 'none';
+        }
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target === customizeModal) {
+            customizeModal.style.display = 'none';
+        }
+    });
+
+    // Recupera il parametro dalla URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const table = urlParams.get('table');
+
+    document.getElementById('checkout-button').addEventListener('click', () => {
+        // Verifica se il carrello contiene almeno un elemento
+        if (cartItems.length === 0) {
+            alert('Inserisci almeno un elemento nel carrello prima di procedere al checkout.');
+            return;
+        }
+
+        // Salva gli elementi del carrello nel localStorage
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    
+        // Costruisci l'URL di checkout con il parametro 'table'
+        const checkoutUrl = `checkout.html?table=${table}`;
         
-    </header>
-    <main>
-       <section id="menu-section">
-    <h2 class="c"> Menù</h2>
-    <div id="menu">
-        
-            
-            <img src="./images/antipasti.jpg" alt="Antipasti" style="width: 100%; height: auto; max-height: 400px; object-fit: contain; margin-bottom: 1rem;">
-            
-        
+        // Reindirizza alla pagina di checkout
+        window.location.href = checkoutUrl;
+    });
 
-        <div><h2 class = "c">Antipasti</h2></div>
-        <div class="menu-item" data-name="Bruschette miste" data-price="8" data-ingredients="Pomodoro, basilico, funghi trifolati, prosciutto, melone">
-            <div class="menu-item-info">
-                <span>Bruschette miste - 8 €<br>Pomodoro, basilico, funghi trifolati, prosciutto, melone </span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                    <button class="customize">Personalizza</button>
-                </div>
-                
-                </div>
-            </div>
-        </div>
-        <div class="menu-item" data-name="Tagliere di Salumi e Formaggi" data-price="14" data-ingredients="Salumi italiani, formaggi assortiti, miele e marmellata">
-            <div class="menu-item-info">
-                <span>Tagliere di salumi e formaggi - 10 €<br>Salumi italiani, formaggi assortiti, miele e marmellata</span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                    <button class="customize">Personalizza</button>
-                </div>
-              
-            </div>
-        </div>
-        <div class="menu-item" data-name="Gamberi in Tempura" data-price="10" data-ingredients="Gamberi fritti in pastella leggera, serviti con salsa agrodolce">
-            <div class="menu-item-info">
-                <span>Gamberi in Tempura - 10 €<br>Gamberi fritti in pastella leggera, serviti con salsa agrodolce</span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                    <button class="customize">Personalizza</button>
-                </div>
-              
-            </div>
-        </div>
-        <div class="menu-item" data-name="Falafel con Hummus" data-price="8" data-ingredients="Pane, Carne, Formaggio, Lattuga, Pomodoro">
-            <div class="menu-item-info">
-                <span>Falafel con Hummus - 8 €<br>Pane, Carne, Formaggio, Lattuga, Pomodoro</span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                    <button class="customize">Personalizza</button>
-                </div>
-              
-            </div>
-        </div>
-        <div class="menu-item" data-name="Insalata Caprese" data-price="9" data-ingredients="Pomodori, mozzarella di bufala, basilico e olio extravergine di oliva">
-            <div class="menu-item-info">
-                <span>Insalata Caprese - 9 €<br>Pomodori, mozzarella di bufala, basilico e olio extravergine di oliva</span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                    <button class="customize">Personalizza</button>
-                </div>
-              
-            </div>
-        </div>
-        <div class="menu-item" data-name="Polpette di Melanzane" data-price="8" data-ingredients="Melanzane fritte, servite con salsa di pomodoro e parmigiano">
-            <div class="menu-item-info">
-                <span>Polpette di Melanzane - 8 €<br>Melanzane fritte, servite con salsa di pomodoro e parmigiano</span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                    <button class="customize">Personalizza</button>
-                </div>
-              
-            </div>
-        </div>
+    function saveCartItems() {
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    }
 
-        
-            <img src="./images/carne.jpg" alt="Hamburger di carne" style="width: 100%; height: auto; max-height: 400px; object-fit: contain; margin-bottom: 1rem;">
-        
+    function renderCartItems() {
+        cartItemsElement.innerHTML = '';
+        cartItems.forEach((item, index) => {
+            const itemElement = document.createElement('div');
+            itemElement.classList.add('cart-item');
 
+            // Verifica se l'articolo è una bevanda o un altro tipo di articolo
+            const isBeverage = item.ingredients.trim() === '';
 
+            // Item details
+            const detailsElement = document.createElement('div');
+            detailsElement.classList.add('cart-item-details');
+            detailsElement.innerHTML = `
+                <div>${item.name}</div>
+                <div>Prezzo: ${item.price.toFixed(2)} €</div>
+                ${!isBeverage ? `<div>Ingredienti: ${item.ingredients}</div>` : ''}
+            `;
 
-        <div><h2 class = "c">Hamburger di carne gourmet</h2></div>
-        <div class="menu-item" data-name="Tex-Mex" data-price="14" data-ingredients="Carne di manzo, guacamole, jalapenos, cheddar, salsa piccante">
-            <div class="menu-item-info">
-                <span>Tex-Mex - 14 €<br>Ingredienti: Carne di manzo, guacamole, jalapenos, cheddar, salsa piccante<br><br>Abbinamento vino consigliato: Zinfandel</span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                    <button class="customize">Personalizza</button>
-                </div>
-              
-            </div>
-        </div>
-        <div class="menu-item" data-name="Greek Style" data-price="13" data-ingredients="Carne di agnello, tzatziki, lattuga, pomodoro, cipolla rossa, feta">
-            <div class="menu-item-info">
-                <span>Greek Style - 13 €<br>Ingredienti: Carne di agnello, tzatziki, lattuga, pomodoro, cipolla rossa, feta<br><br>Abbinamento Vino consigliato: Pinot Noir
-                </span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                    <button class="customize">Personalizza</button>
-                </div>
-              
-            </div>
-        </div>
-        <div class="menu-item" data-name="Mediterraneo" data-price="13" data-ingredients="Carne di manzo, melanzane grigliate, mozzarella, pomodori secchi, pesto">
-            <div class="menu-item-info">
-                <span>Mediterraneo - 13 €<br>Ingredienti: Carne di manzo, melanzane grigliate, mozzarella, pomodori secchi, pesto<br><br>Abbinamento Vino consigliato: Sangiovese</span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                    <button class="customize">Personalizza</button>
-                </div>
-              
-            </div>
-        </div>
-        <div class="menu-item" data-name="Spicy Chorizo" data-price="14" data-ingredients="Carne di manzo e chorizo, peperoni grigliati, cipolla ">
-            <div class="menu-item-info">
-                <span>Spicy Chorizo - 14 €<br>Ingredienti: Carne di manzo e chorizo, peperoni grigliati, cipolla rossa, peperoncino, aioli <br><br>Abbinamento Vino consigliato: Tempranillo</span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                    <button class="customize">Personalizza</button>
-                </div>
-              
-            </div>
-        </div>
-        <div class="menu-item" data-name="French Burger" data-price="14" data-ingredients="Carne di manzo, brie, cipolla caramellata, senape di Digione">
-            <div class="menu-item-info">
-                <span>French Burger - 14 €<br>Ingredienti: Carne di manzo, brie, cipolla caramellata, senape di Digione <br><br>Abbinamento Vino consigliato: Cabernet Sauvignon</span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                    <button class="customize">Personalizza</button>
-                </div>
-              
-            </div>
-        </div>
+            itemElement.appendChild(detailsElement);
 
-        
-            <img src="./images/pesce.jpg" alt="Hamburger di pesce" style="width: 100%; height: auto; max-height: 400px; object-fit: contain; margin-bottom: 1rem;">
+            // Quantity controls
+            const quantityElement = document.createElement('div');
+            quantityElement.classList.add('cart-item-quantity');
+            quantityElement.innerHTML = `
+                <button class="quantity-button" data-action="decrease" data-index="${index}">-</button>
+                <span>${item.quantity}</span>
+                <button class="quantity-button" data-action="increase" data-index="${index}">+</button>
+            `;
 
-           
-        
+            // Remove button
+            const removeButton = document.createElement('button');
+            removeButton.textContent = 'Rimuovi';
+            removeButton.classList.add('remove-button');
+            removeButton.addEventListener('click', () => {
+                cartItems.splice(index, 1); // Remove item from cartItems array
+                saveCartItems(); // Update localStorage
+                renderCartItems(); // Re-render cart items
+            });
 
-        <div><h2 class = "c">Hamburger di pesce gourmet</h2></div>
-        <div class="menu-item" data-name="Space Salmon " data-price="16" data-ingredients="Salmone marinato agli agrumi, crema di formaggio e aneto, rucola, zest di limone, pepe rosa e semi di papavero, granella di pistacchi, pane nero al carbone,Patatine Homemade">
-            <div class="menu-item-info">
-                <span>Space Salmon - 16 €<br>Ingredienti: Salmone marinato agli agrumi, crema di formaggio e aneto, rucola, zest di limone, pepe rosa e semi di papavero, granella di pistacchi, pane nero al carbone e patatine homemade <br><br>Abbinamento Vino consigliato: Sauvignon Blanc</span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                    <button class="customize">Personalizza</button>
-                </div>
-              
-            </div>
-        </div>
+            // Append details, quantity controls, and remove button to item element
+            itemElement.appendChild(detailsElement);
+            itemElement.appendChild(quantityElement);
+            itemElement.appendChild(removeButton);
 
-        
-        <div class="menu-item" data-name="Tuna Steak" data-price="16" data-ingredients="Tonno scottato, rucola, pomodoro, maionese al wasabi.
-        ">
-            <div class="menu-item-info">
-                <span>Tuna Steak - 16 €<br>Ingredienti: Tonno scottato, rucola, pomodoro, maionese al wasabi <br><br>Abbinamento Vino: Pinot Grigio</span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                    <button class="customize">Personalizza</button>
-                </div>
-              
-            </div>
-        </div>
+            // Append item element to cart items container
+            cartItemsElement.appendChild(itemElement);
+        });
+        aggiornaTotaleCarrello();
+        setupQuantityButtons();
+    }
 
-        <div class="menu-item" data-name="Tonno Superior" data-price="16" data-ingredients="Pane al nero di seppia, tartare di tonno superior, burrata pugliese, pistacchio di bronte DOP, olio al tartufo bianco, rucola">
-            <div class="menu-item-info">
-                <span>Tonno Superior - 16 €<br>Ingredienti: Pane al nero di seppia, tartare di tonno superior, burrata pugliese, pistacchio di bronte DOP, olio al tartufo bianco, rucola <br><br>Abbinamento Vino consigliato: Sauvignon Blanc</span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                    <button class="customize">Personalizza</button>
-                </div>
-              
-            </div>
-        </div>
-       
-        <div class="menu-item" data-name="Crab Cake Burger" data-price="10" data-ingredients="Tortino di granchio, lattuga, pomodoro, salsa tartara">
-            <div class="menu-item-info">
-                <span>Crab Cake Burger - 15 €<br>Ingredienti: Tortino di granchio, lattuga, pomodoro, salsa tartara. <br><br>Abbinamento Vino consigliato: Riesling
-                </span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                    <button class="customize">Personalizza</button>
-                </div>
-              
-            </div>
-        </div>
-        <div class="menu-item" data-name="Octopus Burger" data-price="16" data-ingredients="Polpo fritto, rape saltate, mosto cotto di fichi, ricotta, pepe">
-            <div class="menu-item-info">
-                <span>Octopus Burger - 16 €<br>Ingredienti: Polpo fritto, rape saltate, mosto cotto di fichi, ricotta, pepe <br><br>Abbinamento Vino consigliato: Greco di Tufo</span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                    <button class="customize">Personalizza</button>
-                </div>
-              
-            </div>
-        </div>
+    function setupQuantityButtons() {
+        const quantityButtons = document.querySelectorAll('.quantity-button');
+        quantityButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const action = button.dataset.action;
+                const index = parseInt(button.dataset.index);
 
-        
-                <img src="./images/vegano.jpg" alt="Hamburger Veggie" style="width: 100%; height: auto; max-height: 400px; object-fit: contain; margin-bottom: 1rem;">
+                if (action === 'decrease') {
+                    if (cartItems[index].quantity > 1) {
+                        cartItems[index].quantity--;
+                    }
+                } else if (action === 'increase') {
+                    cartItems[index].quantity++;
+                }
 
-           
-        
+                saveCartItems();
+                renderCartItems(); // Update cart after quantity change
+            });
+        });
+    }
 
-        <div><h2 class = "c">Hamburger Veggie</h2></div>
-        <div class="menu-item" data-name="Hej Vegan Burger" data-price="16" data-ingredients="Pane nero al carbone, blend vegano di ceci e fagioli, crema di zucca, tofu marinato alla griglia, pomodoro fresco, pesto dello chef, chips di cavolo nero, patatine homemade">
-            <div class="menu-item-info">
-                <span>Hej Vegan Burger - 16 €<br>Ingredienti: Pane nero al carbone, blend vegano di ceci e fagioli, crema di zucca, tofu marinato alla griglia, pomodoro fresco, pesto dello chef, chips di cavolo nero, patatine homemade <br><br>Abbinamento Vino consigliato: Pinot Grigio</span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                    <button class="customize">Personalizza</button>
-                </div>
-              
-            </div>
-        </div>
-        <div class="menu-item" data-name="Quinoa Burger" data-price="13" data-ingredients="Burger di quinoa, lattuga, pomodoro, avocado, salsa tahini.">
-            <div class="menu-item-info">
-                <span>Quinoa Burger - 13 €<br>Ingredienti: Burger di quinoa, lattuga, pomodoro, avocado, salsa tahini. <br><br>Abbinamento Vino consigliato: Sauvignon Blanc</span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                    <button class="customize">Personalizza</button>
-                </div>
-              
-            </div>
-        </div>
-        <div class="menu-item" data-name="Beestrot Burger" data-price="13" data-ingredients="Burger di barbabietola, lattuga, pomodoro, avocado, maionese vegana">
-            <div class="menu-item-info">
-                <span>Beestrot Burger - 13 €<br>Ingredienti: Burger di barbabietola, lattuga, pomodoro, avocado, maionese vegana. <br><br>Abbinamento Vino: Rosé
-                </span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                    <button class="customize">Personalizza</button>
-                </div>
-              
-            </div>
-        </div>
-        <div class="menu-item" data-name="Zucchini Noodle Burger" data-price="13" data-ingredients="Burger di verdure, spaghetti di zucchine, mandorle tostate, maionese vegana">
-            <div class="menu-item-info">
-                <span>Zucchini Noodle Burger - 13 €<br>Ingredienti: Burger di verdure, spaghetti di zucchine, mandorle tostate, maionese vegana. <br><br>Abbinamento Vino: Sauvignon Blanc
+    function aggiornaTotaleCarrello() {
+        const totale = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+        document.getElementById('totale-carrello').innerText = `Totale: ${totale.toFixed(2)} €`;
+    }
 
-                </span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                    <button class="customize">Personalizza</button>
-                </div>
-              
-            </div>
-        </div>
-        <div class="menu-item" data-name="Falafel Burger" data-price="12" data-ingredients="Falafel, lattuga, pomodoro, cipolla ">
-            <div class="menu-item-info">
-                <span>Falafel Burger - 12 €<br>Ingredienti: Falafel, lattuga, pomodoro, cipolla <br><br> Abbinamento Vino: Pinot Noir
-                </span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                    <button class="customize">Personalizza</button>
-                </div>
-              
-            </div>
-        </div>
-
-
-        <img src="./images/cocktail.jpg" alt="Hamburger Veggie" style="width: 100%; height: auto; max-height: 400px; object-fit: contain; margin-bottom: 1rem;">
-
-
-        
-        <div><h2 class = "c">Cocktail</h2></div>
-        <div class="menu-item" data-name="vanilla coconut smoothie" data-price="8" data-ingredients="cocco,banana,latte di mandorle,vaniglia">
-            <div class="menu-item-info">
-                <span>Vanilla coconut smoothie - 8 €<br>Ingredienti:cocco,banana,latte di mandorle,vaniglia </span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                </div>
-              
-            </div>
-        </div>
-        <div class="menu-item" data-name="smoky negroni" data-price="9" data-ingredients="Gin affumicato,vermouth rosso,campari">
-            <div class="menu-item-info">
-                <span>Smoky negroni - 9 €<br>Ingredienti:Gin affumicato,vermouth rosso,campari </span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                </div>
-              
-            </div>
-        </div>
-        <div class="menu-item" data-name="maple whiskey sour" data-price="12" data-ingredients="whiskey,succo di limone fresco,sciroppo d'acero,albume d' uovo,ciliegia al maraschino">
-            <div class="menu-item-info">
-                <span>Maple whiskey sour - 12 €<br>Ingredienti: whiskey,succo di limone fresco,sciroppo d'acero,albume d' uovo,ciliegia al maraschino
-                </span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                </div>
-              
-            </div>
-        </div>
-        <div class="menu-item" data-name="citrus paloma" data-price="10" data-ingredients="succo di pompelmo fresco,succo di lime fresco,soda al pompelmo,bordo di sale">
-            <div class="menu-item-info">
-                <span>Citrus paloma - 10 €<br>Ingredienti: succo di pompelmo fresco,succo di lime fresco,soda al pompelmo,bordo di sale
-
-                </span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                </div>
-              
-            </div>
-        </div>
-        <div class="menu-item" data-name="water melon mojito" data-price="12" data-ingredients="rum bianco,anguria fresca,menta fresca,succo di lime fresco,soda ">
-            <div class="menu-item-info">
-                <span>water melon mojito - 12 €<br>Ingredienti: rum bianco,anguria fresca,menta fresca,succo di lime fresco,soda 
-                </span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                </div>
-              
-            </div>
-        </div>
-
-
-        <img src="./images/logan-weaver-lgnwvr-B9lUt97FL9I-unsplash.jpg" alt="Hamburger Veggie" style="width: 100%; height: auto; max-height: 400px; object-fit: contain; margin-bottom: 1rem;">
-
-
-        <div><h2 class = "c">Bevande</h2></div>
-        <div class="menu-item" data-name="acqua naturale 1L" data-price="2" data-ingredients=" ">
-            <div class="menu-item-info">
-                <span>acqua naturale - 2 €
-                </span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                    
-                </div>
-              
-            </div>
-        </div>
-        <div class="menu-item" data-name="acqua frizzante 1L" data-price="2" data-ingredients=" ">
-            <div class="menu-item-info">
-                <span>acqua frizzante - 2 €
-                </span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                  
-                </div>
-              
-            </div>
-        </div>
-        <div class="menu-item" data-name="coca-cola" data-price="4" data-ingredients=" ">
-            <div class="menu-item-info">
-                <span>Coca-cola - 4 €
-                </span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                    
-                </div>
-              
-            </div>
-        </div>
-        <div class="menu-item" data-name="fanta" data-price="4" data-ingredients=" ">
-            <div class="menu-item-info">
-                <span>Fanta - 4 €
-                </span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                </div>
-              
-            </div>
-        </div>
-        <div class="menu-item" data-name="sprite" data-price="4" data-ingredients=" ">
-            <div class="menu-item-info">
-                <span>Sprite - 4 €
-                </span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                    
-                </div>
-              
-            </div>
-        </div>
-        <div class="menu-item" data-name="birra chiara alla spina" data-price="6" data-ingredients=" ">
-            <div class="menu-item-info">
-                <span>Birra chiara alla spina - 6 €
-                </span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                </div>
-              
-            </div>
-        </div>
-        <div class="menu-item" data-name="birra scura alla spina" data-price="6" data-ingredients=" ">
-            <div class="menu-item-info">
-                <span>Birra scura alla spina- 6 €
-                </span>
-                <div class="menu-item-buttons">
-                    <button class="add-to-cart">Aggiungi al Carrello</button>
-                </div>
-              
-            </div>
-        </div>
-   
-  
-        
-
-        
-
-
-
-
-
-
-
-    </div>
-</section>
-     <h2>Il Tuo Carrello</h2>
-            <div id="cart-items">
-                <!-- Cart items will be dynamically inserted here -->
-            </div>
-            <p id="totale-carrello">Totale: 0 €</p>
-            <button id="checkout-button">Vai al Checkout</button>
-        </section>
-    </main>
-
-    <!-- Modale per la personalizzazione -->
-    <div id="customize-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <h2>Personalizza il tuo piatto</h2>
-            <div id="ingredient-options">
-                <!-- Ingredient options will be dynamically inserted here -->
-            </div>
-            <button id="save-customization">Salva</button>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
-</body>
-</html>
+    renderCartItems(); // Initial rendering of cart items
+});
