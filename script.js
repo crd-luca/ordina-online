@@ -79,6 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Recupera il parametro dalla URL
     const urlParams = new URLSearchParams(window.location.search);
     const table = urlParams.get('table');
+    
 
     document.getElementById('checkout-button').addEventListener('click', () => {
         // Verifica se il carrello contiene almeno un elemento
